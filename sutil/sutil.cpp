@@ -576,7 +576,7 @@ static void getPtxFromCuString( std::string& ptx, const char* cu_source, std::ve
     // Collect NVRTC options
     // Collect include dirs
     std::vector<std::string> include_dirs;
-    const char*              abs_dirs[] = { "/home/vector/optix/include", "/home/vector/practiceopt/inc", "/home/vector/practiceopt", "/home/vector/practiceopt/cuda", "/usr/local/cuda/include" };
+    const char*              abs_dirs[] = { "/home/vector/optix/include", "/home/vector/osvp/inc", "/home/vector/osvp", "/home/vector/osvp/cuda", "/usr/local/cuda/include" };
     const char*              rel_dirs[] = { "" };
 
     for( const char* dir : abs_dirs )

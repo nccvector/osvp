@@ -28,8 +28,18 @@
 
 #include <optix.h>
 
-#include "optixHello.h"
 #include <cuda/helpers.h>
+
+struct Params
+{
+    uchar4* image;
+    unsigned int image_width;
+};
+
+struct RayGenData
+{
+    float r,g,b;
+};
 
 extern "C" {
 __constant__ Params params;
