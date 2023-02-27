@@ -33,6 +33,8 @@
 
 #include <vector>
 
+#include "Shared.h"
+
 #define APP_EXIT_SUCCESS          0
 #define APP_ERROR_UNKNOWN        -1
 #define APP_ERROR_CREATE_WINDOW  -2
@@ -40,16 +42,6 @@
 #define APP_ERROR_APP_INIT       -5
 #define APP_ERROR_GLEW_INIT      -4
 
-struct Params
-{
-    uchar4* image;
-    unsigned int image_width;
-};
-
-struct RayGenData
-{
-    float r,g,b;
-};
 
 // optix shit
 template <typename T>
