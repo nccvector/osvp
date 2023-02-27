@@ -65,24 +65,6 @@
 namespace sutil
 {
 
-static void errorCallback( int error, const char* description )
-{
-    std::cerr << "GLFW Error " << error << ": " << description << std::endl;
-}
-
-
-static void keyCallback( GLFWwindow* window, int32_t key, int32_t /*scancode*/, int32_t action, int32_t /*mods*/ )
-{
-    if( action == GLFW_PRESS )
-    {
-        if( key == GLFW_KEY_Q || key == GLFW_KEY_ESCAPE )
-        {
-            glfwSetWindowShouldClose( window, true );
-        }
-    }
-}
-
-
 static void savePPM( const unsigned char* Pix, const char* fname, int wid, int hgt, int chan )
 {
     if( Pix == NULL || wid < 1 || hgt < 1 )
@@ -148,7 +130,6 @@ static std::string existingFilePath( const char* directory, const char* relative
     return fileExists( path ) ? path : "";
 }
 
-
 size_t pixelFormatSize( BufferImageFormat format )
 {
     switch( format )
@@ -163,7 +144,6 @@ size_t pixelFormatSize( BufferImageFormat format )
             throw Exception( "sutil::pixelFormatSize: Unrecognized buffer format" );
     }
 }
-
 
 Texture loadTexture( const char* fname, float3 default_color, cudaTextureDesc* tex_desc )
 {
@@ -296,57 +276,6 @@ ImageBuffer loadImage( const char* fname, int32_t force_components )
 
     return image;
 }
-
-
-void displayBufferWindow( const char* title, const ImageBuffer& buffer )
-{
-    //
-    // Initialize GLFW state
-    //
-    GLFWwindow* window = nullptr;
-    glfwSetErrorCallback( errorCallback );
-    if( !glfwInit() )
-        throw Exception( "Failed to initialize GLFW" );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 3 );
-    glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 3 );
-    glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );  // To make Apple happy -- should not be needed
-    glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
-
-    window = glfwCreateWindow( buffer.width, buffer.height, title, nullptr, nullptr );
-    if( !window )
-        throw Exception( "Failed to create GLFW window" );
-    glfwMakeContextCurrent( window );
-    glfwSetKeyCallback( window, keyCallback );
-
-
-    //
-    // Initialize GL state
-    //
-    GLDisplay display( buffer.pixel_format );
-
-    GLuint pbo = 0u;
-    GL_CHECK( glGenBuffers( 1, &pbo ) );
-    GL_CHECK( glBindBuffer( GL_ARRAY_BUFFER, pbo ) );
-    GL_CHECK( glBufferData( GL_ARRAY_BUFFER, pixelFormatSize( buffer.pixel_format ) * buffer.width * buffer.height,
-                            buffer.data, GL_STREAM_DRAW ) );
-    GL_CHECK( glBindBuffer( GL_ARRAY_BUFFER, 0 ) );
-
-    //
-    // Display loop
-    //
-    int framebuf_res_x = 0, framebuf_res_y = 0;
-    do
-    {
-        glfwWaitEvents();
-        glfwGetFramebufferSize( window, &framebuf_res_x, &framebuf_res_y );
-        display.display( buffer.width, buffer.height, framebuf_res_x, framebuf_res_y, pbo );
-        glfwSwapBuffers( window );
-    } while( !glfwWindowShouldClose( window ) );
-
-    glfwDestroyWindow( window );
-    glfwTerminate();
-}
-
 
 static float toSRGB( float c )
 {
